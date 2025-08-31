@@ -5,6 +5,13 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running workflow'
+        required: false
+        default: 'Manual trigger'
+        type: string
 
 jobs:
   build:
@@ -21,4 +28,5 @@ jobs:
         echo "Starting multi-line script"
         echo "Current date is $(date)"
         echo "Repository: ${{ github.repository }}"
+        echo "Trigger reason: ${{ github.event.inputs.reason || 'Automated trigger' }}"
         echo "Workflow complete!"
