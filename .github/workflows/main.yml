@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run a one-line script
+      run: echo "Hello from GitHub Actions!"
+      
+    - name: Run a multi-line script
+      run: |
+        echo "Starting multi-line script"
+        echo "Current date is $(date)"
+        echo "Repository: ${{ github.repository }}"
+        echo "Workflow complete!"
