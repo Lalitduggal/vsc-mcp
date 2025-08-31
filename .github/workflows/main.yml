@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       reason:
@@ -14,7 +20,28 @@ on:
         type: string
 
 jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      
+      - id: check
+        name: Check for changes
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            git diff --quiet HEAD^ HEAD || echo "should_run=true" >> $GITHUB_OUTPUT
+          fi
+
   build:
+    needs: check_changes
+    if: needs.check_changes.outputs.should_run == 'true'
     runs-on: ubuntu-latest
 
     steps:
